@@ -8,7 +8,8 @@ import Slider from '@react-native-community/slider';
 export default function App() {
     const [cameraPermission, requestCameraPermission] = useCameraPermissions(); 
     const [mediaLibraryPermission, requestMediaLibraryPermission] = MediaLibrary.usePermissions();
-
+  console.log("camera permissions:", cameraPermission);
+  console.log("media permissions:", mediaLibraryPermission);
     if( !cameraPermission || !mediaLibraryPermission ){
         return (
             <View style={styles.container}>
@@ -16,7 +17,7 @@ export default function App() {
             </View>
         );
     }
-    if(!cameraPermission.granted || !mediaLibraryPermission.status !== 'granted'){
+    if(!cameraPermission.granted || mediaLibraryPermission.status !== 'granted'){
         return (
             <View style={styles.container}>
                 <Text>Permission needed</Text>
@@ -32,8 +33,7 @@ export default function App() {
   
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+        <CameraView style={styles.camera} />
     </View>
   );
 }
@@ -55,5 +55,10 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  camera: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
 });
