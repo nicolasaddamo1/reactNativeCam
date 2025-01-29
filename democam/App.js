@@ -20,7 +20,10 @@ export default function App() {
         return (
             <View style={styles.container}>
                 <Text>Permission needed</Text>
-                <TouchableOpacity style={styles.button} onPress={() => {}}>
+                <TouchableOpacity style={styles.button} onPress={() => {
+                    requestCameraPermission();
+                    requestMediaLibraryPermission();
+                }}>
                   <Text style={styles.buttonText}>Grant Permissions</Text>
                 </TouchableOpacity>
             </View>
