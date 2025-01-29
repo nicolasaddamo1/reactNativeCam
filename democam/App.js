@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React,{ useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import Slider from '@react-native-community/slider';
@@ -9,12 +9,10 @@ export default function App() {
     const [cameraPermission, requestCameraPermission] = useCameraPermissions(); 
     const [mediaLibraryPermission, requestMediaLibraryPermission] = MediaLibrary.usePermissions();
 
-    if(!cameraPermission || !mediaLibraryPermission){
+    if( !cameraPermission || !mediaLibraryPermission ){
         return (
             <View style={styles.container}>
                 <Text>Permissions not granted</Text>
-                <Button title="Request Camera Permission" onPress={requestCameraPermission} />
-                <Button title="Request Media Library Permission" onPress={requestMediaLibraryPermission} />
             </View>
         );
     }
@@ -22,6 +20,9 @@ export default function App() {
         return (
             <View style={styles.container}>
                 <Text>Permission needed</Text>
+                <TouchableOpacity style={styles.button} onPress={() => {}}>
+                  <Text style={styles.buttonText}>Grant Permissions</Text>
+                </TouchableOpacity>
             </View>
         );
     }
@@ -40,5 +41,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  button: {
+    padding: 10,
+    backgroundColor: 'blue',
+    color: 'white',
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
