@@ -56,6 +56,10 @@ export default function App() {
         zoom: Math.max(current.zoom - 0.1, 0),
       }));
     };
+    const takePicture = async () => {
+      const photo = await CameraView.takePictureAsync();
+      await MediaLibrary.saveToLibraryAsync(photo.uri);
+    };
   return (
     <View style={styles.container}>
       <View style={styles.tocControlContainer}>
@@ -112,6 +116,16 @@ export default function App() {
           onPress={zoomIn}
           />
         </View>
+        <View style={styles.bottomControlContainer}>
+              <Button 
+              icon='camera'
+              size={60}
+              style={{ height: 60,
+              }}
+              onPress={takePicture}
+              />
+
+        </View>
     </View>
   );
 }
@@ -156,5 +170,13 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     flexDirection: 'row',
+  },
+  bottomControlContainer:{
+    height: 100,
+    backgroundColor: 'black',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    imageresizeMode: 'stretch',
   }
 });
