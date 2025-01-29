@@ -44,6 +44,18 @@ export default function App() {
       }));
     };
 
+    const zoomIn = () => {
+      setCameraProps((current)=>({
+        ...current,
+        zoom: Math.min(current.zoom + 0.1, 1),
+      }));
+    };
+    const zoomOut = () => {
+      setCameraProps((current)=>({
+        ...current,
+        zoom: Math.max(current.zoom - 0.1, 0),
+      }));
+    };
   return (
     <View style={styles.container}>
       <View style={styles.tocControlContainer}>
@@ -80,6 +92,26 @@ export default function App() {
         enableTorch={cameraProps.enableTorch}
 
         />
+        <View style={styles.sliderContainer}>
+          <Button
+          icon='zoom-out'
+          onPress={zoomOut}
+          />
+          <Slider 
+            style={styles.slider}
+            minimumValue={0}
+            maximumValue={1}
+            value={cameraProps.zoom} 
+            onValueChange={(value)=>setCameraProps((current)=>({
+              ...current,
+              zoom: value,}))}
+            step={0.1}
+          />
+          <Button
+          icon='zoom-in'
+          onPress={zoomIn}
+          />
+        </View>
     </View>
   );
 }
@@ -114,4 +146,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  slider:{
+    flex: 1,
+    marginHorizontal: 10,
+  },
+  sliderContainer:{
+    position: 'absolute',
+    bottom:120,
+    left: 20,
+    right: 20,
+    flexDirection: 'row',
+  }
 });
