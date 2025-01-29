@@ -37,19 +37,38 @@ export default function App() {
         );
     }
   
+    const toggleProperty = (prop, option1, option2) => {
+      setCameraProps((current)=>({
+        ...current,
+        [prop]: current[prop] === option1 ? option2 : option1,
+      }));
+    };
+
   return (
     <View style={styles.container}>
       <View style={styles.tocControlContainer}>
         <Text>Top Controls</Text>
         <Button 
-        icon="flip-camera-ios"/>
+        icon="flip-camera-ios"
+        onPress={()=>toggleProperty('facing','back','front')}
+        style={{backgroundColor: cameraProps.facing === "back" ? "blue" : "yellow"}}/>
         <Button
-        icon="flash-on" />
+        icon= {cameraProps.flash === "on" ? "flash-on" : "flash-off"}
+        style={{backgroundColor: cameraProps.flash === "on" ? "blue" : "yellow"}}
+        onPress={()=>toggleProperty('flash','on','off')}/>
         <Button
-        icon='animation' />
+        icon='animation'
+        color={cameraProps.animateShutter ? 'green' : 'red'}
+        onPress={()=>toggleProperty('animateShutter',true,false)}
+        style={{backgroundColor: cameraProps.animateShutter ? "blue" : "yellow"}}
+
+        />
         <Button 
-        icon='flashlight-on'/>
-        <Button />
+        icon={cameraProps.enableTorch ? "flashlight-off":"flashlight-on"}
+        onPress={()=>toggleProperty('enableTorch', true,false)}
+        style={{backgroundColor: cameraProps.enableTorch? "yellow" : "blue"}}
+
+        />
       </View>
 
         <CameraView
