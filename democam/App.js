@@ -4,12 +4,18 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import Slider from '@react-native-community/slider';
+import Button from './components/Button';
 
 export default function App() {
     const [cameraPermission, requestCameraPermission] = useCameraPermissions(); 
     const [mediaLibraryPermission, requestMediaLibraryPermission] = MediaLibrary.usePermissions();
-  console.log("camera permissions:", cameraPermission);
-  console.log("media permissions:", mediaLibraryPermission);
+    const [cameraProps, setCameraProps] = useState({
+      zoom: 0,
+      facing: 'back',
+      flash: 'on',
+      animateShutter: true,
+      enableTorch: false,
+    });
     if( !cameraPermission || !mediaLibraryPermission ){
         return (
             <View style={styles.container}>
@@ -20,7 +26,7 @@ export default function App() {
     if(!cameraPermission.granted || mediaLibraryPermission.status !== 'granted'){
         return (
             <View style={styles.container}>
-                <Text>Permission needed</Text>
+                <Text style={styles.tocControlContainer}>Permission needed</Text>
                 <TouchableOpacity style={styles.button} onPress={() => {
                     requestCameraPermission();
                     requestMediaLibraryPermission();
@@ -33,7 +39,28 @@ export default function App() {
   
   return (
     <View style={styles.container}>
-        <CameraView style={styles.camera} />
+      <View style={styles.tocControlContainer}>
+        <Text>Top Controls</Text>
+        <Button 
+        icon="flip-camera-ios"/>
+        <Button
+        icon="flash-on" />
+        <Button
+        icon='animation' />
+        <Button 
+        icon='flashlight-on'/>
+        <Button />
+      </View>
+
+        <CameraView
+        style={styles.camera}
+        zoom={cameraProps.zoom}
+        facing={cameraProps.facing}
+        flash={cameraProps.flash}
+        animateShutter={cameraProps.animateShutter}
+        enableTorch={cameraProps.enableTorch}
+
+        />
     </View>
   );
 }
@@ -42,8 +69,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    marginTop: 25
+  },
+  tocControlContainer: {
+    alignContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'center',
+    width: '100%',
+    padding: 10,
   },
   button: {
     padding: 10,
