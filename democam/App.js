@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React,{ useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import Slider from '@react-native-community/slider';
@@ -16,6 +16,9 @@ export default function App() {
       animateShutter: true,
       enableTorch: false,
     });
+    const [image, setImage] = useState(null);
+
+    const cameraRef = useRef(null);
     if( !cameraPermission || !mediaLibraryPermission ){
         return (
             <View style={styles.container}>
@@ -57,12 +60,21 @@ export default function App() {
       }));
     };
     const takePicture = async () => {
-      const photo = await CameraView.takePictureAsync();
-      await MediaLibrary.saveToLibraryAsync(photo.uri);
+      if (cameraRef.current){
+        try{
+          const picture = await cameraRef.current.takePictureAsync();
+          setImage(picture.uri);
+        }
+        catch (error){
+          console.log(error);
+        }
+      }
     };
   return (
     <View style={styles.container}>
-      <View style={styles.tocControlContainer}>
+      {!image ? (
+        <>
+        <View style={styles.tocControlContainer}>
         <Text>Top Controls</Text>
         <Button 
         icon="flip-camera-ios"
@@ -94,7 +106,7 @@ export default function App() {
         flash={cameraProps.flash}
         animateShutter={cameraProps.animateShutter}
         enableTorch={cameraProps.enableTorch}
-
+        ref={cameraRef}
         />
         <View style={styles.sliderContainer}>
           <Button
@@ -126,6 +138,25 @@ export default function App() {
               />
 
         </View>
+        </>
+    ) : (
+      <>
+      <Image source={{uri:image}} style={styles.camera}/>
+      <View style={styles.bottomControlContainer}>
+        <Button
+        icon = 'delete'
+        onPress={()=>setImage(null)}
+        />
+        <Button
+        icon='save'
+        onPress={savePicture}
+        />
+
+      </View>
+      </>
+    )
+
+   }
     </View>
   );
 }
