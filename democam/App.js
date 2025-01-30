@@ -87,7 +87,22 @@ export default function App() {
     }
   }
 
-  const getLastSavedImage = 
+  const getLastSavedImage = async () => {
+    if (mediaLibraryPermission && mediaLibraryPermission.status === 'granted'){
+      const dcimAlbum = await MediaLibrary.getAlbumAsync('DCIM');
+      if (dcimAlbum){
+        const {assets} = await MediaLibrary.getAssetsAsync({album: dcimAlbum, sortBy:[[MediaLibrary.SortBy.creationTime, false]], mediaType:MediaLibrary.MediaType.photo, first: 1});
+        if (assets.length > 0){
+          const assetInfo = await MediaLibrary.getAssetInfoAsync(assets[0].id);
+          setPreviousImage(assetInfo.localUri || assetInfo.uri);
+        }else{
+          setPreviousImage(null);
+        }
+      }else{
+        setPreviousImage(null);
+      }
+  }
+}
   return (
     <View style={styles.container}>
       {!image ? (
@@ -147,6 +162,10 @@ export default function App() {
           />
         </View>
         <View style={styles.bottomControlContainer}>
+          <Image 
+           source={{uri: previousImage}}
+           style={styles.previousImage}
+          />
               <Button 
               icon='camera'
               size={60}
@@ -227,5 +246,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     imageresizeMode: 'stretch',
+  },
+  previousImage:{
+    height: 50,
+    width: 50,
+    borderRadius: 20,
   }
+
 });
