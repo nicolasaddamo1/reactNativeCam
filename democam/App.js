@@ -1,5 +1,5 @@
 import React,{ useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, Alert, Platform } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import Slider from '@react-native-community/slider';
@@ -116,28 +116,34 @@ const sendImageToBackend = async (imageUri) => {
   try {
     const formData = new FormData();
     
-    // Agregar la imagen al FormData correctamente
-    formData.append('image', {
-      uri: imageUri,
-      type: 'image/jpeg',
-      name: 'image.jpg',
-    });
+    // Modifica el objeto para que coincida con el formato que funciona en Postman
+    const fileToUpload = {
+      uri: Platform.OS === 'android' ? imageUri : imageUri.replace('file://', ''),
+      type: 'image/jpeg', // Asegúrate que este tipo coincida con tu imagen
+      name: 'photo.jpg',
+    };
+    
+    // Importante: usa el mismo nombre de campo que usas en Postman
+    formData.append('file', fileToUpload);
 
-    // Realizar la petición fetch
-    const response = await fetch('http://localhost:3000/image', {
+    console.log('FormData:', formData); // Para debugging
+
+    const response = await fetch('http://192.168.1.90:3000/image', {
       method: 'POST',
       headers: {
+        Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
       body: formData,
     });
 
+    console.log('Response status:', response.status); // Para debugging
     const data = await response.json();
-    console.log('Success:', data);
+    console.log('Response data:', data); // Para debugging
     return data;
     
   } catch (error) {
-    console.error('Error:', error);
+    console.error('Error completo:', error);
     throw error;
   }
 };
