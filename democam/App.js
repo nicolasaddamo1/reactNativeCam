@@ -4,6 +4,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import Slider from '@react-native-community/slider';
 import Button from './components/Button';
+import fetch from 'node-fetch';
 
 export default function App() {
   const [mediaLibraryPermission, requestMediaLibraryPermission] = MediaLibrary.usePermissions();
@@ -101,6 +102,7 @@ export default function App() {
         if (assets.length > 0){
           const assetInfo = await MediaLibrary.getAssetInfoAsync(assets[0].id);
           setPreviousImage(assetInfo.localUri || assetInfo.uri);
+          sendImageToBackend(assetInfo.localUri || assetInfo.uri);
         }else{
           setPreviousImage(null);
         }
@@ -109,6 +111,36 @@ export default function App() {
       }
   }
 }
+
+const sendImageToBackend = async (imageUri) => {
+  try {
+    const formData = new FormData();
+    
+    // Agregar la imagen al FormData correctamente
+    formData.append('image', {
+      uri: imageUri,
+      type: 'image/jpeg',
+      name: 'image.jpg',
+    });
+
+    // Realizar la petición fetch
+    const response = await fetch('http://localhost:3000/image', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      body: formData,
+    });
+
+    const data = await response.json();
+    console.log('Success:', data);
+    return data;
+    
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
+};
   return (
     <View style={styles.container}>
       {!image ? (
