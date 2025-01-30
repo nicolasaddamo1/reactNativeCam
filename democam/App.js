@@ -21,6 +21,12 @@ export default function App() {
 
     const cameraRef = useRef(null);
 
+    useEffect(()=>{
+      if (cameraPermission && cameraPermission.granted && mediaLibraryPermission && mediaLibraryPermission.status === 'granted'){
+      
+      getLastSavedImage();}
+    },[ cameraPermission, mediaLibraryPermission]);
+
 
     if( !cameraPermission || !mediaLibraryPermission ){
         return (
@@ -162,10 +168,12 @@ export default function App() {
           />
         </View>
         <View style={styles.bottomControlContainer}>
-          <Image 
-           source={{uri: previousImage}}
-           style={styles.previousImage}
-          />
+          <TouchableOpacity onPress={()=> previousImage && setImage(previousImage)}>
+              <Image 
+              source={{uri: previousImage}}
+              style={styles.previousImage}
+              />
+          </TouchableOpacity>
               <Button 
               icon='camera'
               size={60}
