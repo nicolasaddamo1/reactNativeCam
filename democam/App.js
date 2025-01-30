@@ -21,74 +21,75 @@ export default function App() {
     const cameraRef = useRef(null);
 
     useEffect(()=>{
-      if (cameraPermission && cameraPermission.granted && mediaLibraryPermission && mediaLibraryPermission.status === 'granted'){
+          
+        if (cameraPermission && cameraPermission.granted && mediaLibraryPermission && mediaLibraryPermission.status === 'granted'){
       
-      getLastSavedImage();}
+          getLastSavedImage();}
     },[ cameraPermission, mediaLibraryPermission]);
 
 
     if( !cameraPermission || !mediaLibraryPermission ){
-        return (
-            <View style={styles.container}>
-                <Text>Permissions not granted</Text>
-            </View>
-        );
+      return (
+        <View style={styles.container}>
+          <Text>Permissions not granted</Text>
+        </View>
+      );
     }
-    if(!cameraPermission.granted || mediaLibraryPermission.status !== 'granted'){
+      if(!cameraPermission.granted || mediaLibraryPermission.status !== 'granted'){
         return (
-            <View style={styles.container}>
-                <Text style={styles.tocControlContainer}>Permission needed</Text>
-                <TouchableOpacity style={styles.button} onPress={() => {
-                    requestCameraPermission();
-                    requestMediaLibraryPermission();
-                }}>
-                  <Text style={styles.buttonText}>Grant Permissions</Text>
-                </TouchableOpacity>
-            </View>
+          <View style={styles.container}>
+            <Text style={styles.tocControlContainer}>Permission needed</Text>
+            <TouchableOpacity style={styles.button} onPress={() => {
+                requestCameraPermission();
+                requestMediaLibraryPermission();
+              }}>
+              <Text style={styles.buttonText}>Grant Permissions</Text>
+            </TouchableOpacity>
+          </View>
         );
-    }
-  
-    const toggleProperty = (prop, option1, option2) => {
-      setCameraProps((current)=>({
-        ...current,
-        [prop]: current[prop] === option1 ? option2 : option1,
-      }));
-    };
-
-    const zoomIn = () => {
-      setCameraProps((current)=>({
-        ...current,
-        zoom: Math.min(current.zoom + 0.1, 1),
-      }));
-    };
-    const zoomOut = () => {
-      setCameraProps((current)=>({
-        ...current,
-        zoom: Math.max(current.zoom - 0.1, 0),
-      }));
-    };
-    const takePicture = async () => {
-      if (cameraRef.current){
-        try{
-          const picture = await cameraRef.current.takePictureAsync();
-          setImage(picture.uri);
-        }
-        catch (error){
-          console.log(error);
-        }
       }
-    };
-    const savePicture = async () =>{
-      if(image){
-        try{
-          const asset = await MediaLibrary.createAssetAsync(image)
-          const assetInfo = await MediaLibrary.getAssetInfoAsync(asset.id);
-          Alert.alert('Picture saved', image);
-          setImage(null);
+  
+  const toggleProperty = (prop, option1, option2) => {
+    setCameraProps((current)=>({
+      ...current,
+      [prop]: current[prop] === option1 ? option2 : option1,
+    }));
+  };
 
-        }catch(error){
-          console.log(error);
-        }
+  const zoomIn = () => {
+    setCameraProps((current)=>({
+      ...current,
+      zoom: Math.min(current.zoom + 0.1, 1),
+    }));
+  };
+  const zoomOut = () => {
+    setCameraProps((current)=>({
+      ...current,
+      zoom: Math.max(current.zoom - 0.1, 0),
+    }));
+  };
+  const takePicture = async () => {
+    if (cameraRef.current){
+      try{
+        const picture = await cameraRef.current.takePictureAsync();
+        setImage(picture.uri);
+      }
+      catch (error){
+        console.log(error);
+      }
+    }
+  };
+  const savePicture = async () =>{
+    if(image){
+      try{
+        const asset = await MediaLibrary.createAssetAsync(image)
+        const assetInfo = await MediaLibrary.getAssetInfoAsync(asset.id);
+        Alert.alert('Picture saved', image);
+        setImage(null);
+        getLastSavedImage();
+      }catch(error){
+        console.log(error);
+      }
     }
   }
 
