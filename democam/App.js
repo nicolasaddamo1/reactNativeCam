@@ -1,14 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
 import React,{ useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, Alert } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import Slider from '@react-native-community/slider';
 import Button from './components/Button';
 
 export default function App() {
+  const [mediaLibraryPermission, requestMediaLibraryPermission] = MediaLibrary.usePermissions();
     const [cameraPermission, requestCameraPermission] = useCameraPermissions(); 
-    const [mediaLibraryPermission, requestMediaLibraryPermission] = MediaLibrary.usePermissions();
+    const [previousImage, setPreviousImage] = useState(null);
+    const [image, setImage] = useState(null);
     const [cameraProps, setCameraProps] = useState({
       zoom: 0,
       facing: 'back',
@@ -16,9 +18,10 @@ export default function App() {
       animateShutter: true,
       enableTorch: false,
     });
-    const [image, setImage] = useState(null);
 
     const cameraRef = useRef(null);
+
+
     if( !cameraPermission || !mediaLibraryPermission ){
         return (
             <View style={styles.container}>
@@ -70,6 +73,21 @@ export default function App() {
         }
       }
     };
+    const savePicture = async () =>{
+      if(image){
+        try{
+          const asset = await MediaLibrary.createAssetAsync(image)
+          const assetInfo = await MediaLibrary.getAssetInfoAsync(asset.id);
+          Alert.alert('Picture saved', image);
+          setImage(null);
+
+        }catch(error){
+          console.log(error);
+        }
+    }
+  }
+
+  const getLastSavedImage = 
   return (
     <View style={styles.container}>
       {!image ? (
